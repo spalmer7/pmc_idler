@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://cewnhujr0vcjq"]
+
+[ext_resource type="FontFile" uid="uid://drmi8fpqqp22s" path="res://resources/VT323-Regular.ttf" id="1_ej4o4"]
+
+[resource]
+base_font = ExtResource("1_ej4o4")

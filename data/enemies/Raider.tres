@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3 uid="uid://cwh1tl62550yh"]
+
+[ext_resource type="Script" uid="uid://cletp67jsosil" path="res://data/enemy_data.gd" id="1_esok4"]
+
+[resource]
+script = ExtResource("1_esok4")
+name = "Raider"
+max_health = 15
+enemy_damage = 2
+metadata/_custom_type_script = "uid://cletp67jsosil"

@@ -5,3 +5,4 @@ extends Resource
 @export var max_health: int
 @export var enemy_min_damage: int
 @export var enemy_max_damage: int
+@export var enemy_defence : int

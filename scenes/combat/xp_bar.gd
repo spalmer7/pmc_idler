@@ -1,6 +1,6 @@
 extends Node
 
-@export var skill_name: String  # "firearms_training"
+@export var skill_name: String  # "Firearms Training"
 
 @onready var bar: ProgressBar = $"."
 @onready var label: Label = $XPLabel

@@ -89,9 +89,13 @@ func _on_button_pressed() -> void:
 		var vitality_xp = int(xp_gain * 0.33)
 
 		# Log XP
-		combat_logs.append("You hit for %d damage." % damage)
-		combat_logs.append("%d XP to %s" % [xp_gain, main_skill.capitalize()])
-		combat_logs.append("%d XP to Vitality" % vitality_xp)
+		if damage > 0:
+			combat_logs.append("You hit for %d damage." % damage)
+			combat_logs.append("%d XP to %s" % [xp_gain, main_skill.capitalize()])
+			combat_logs.append("%d XP to Vitality" % vitality_xp)
+		elif damage == 0:
+			combat_logs.append("You missed!")
+
 
 		# UI updates
 		vitality_bar.update_bar()
@@ -120,9 +124,23 @@ func _on_button_pressed() -> void:
 
 # Damage formula based on firearm + handling 
 func _calculate_damage() -> int:
-	var fire = SkillManager.get_level("Firearms Training")
-	var handling = SkillManager.get_level("Weapon Handling")
-	return int(5 + (fire * 0.6) + (handling * 0.4))  # tweakable formula
+	var accuracy = SkillManager.get_level("Firearms Training")
+	var max_hit = int(5 + SkillManager.get_level("Weapon Handling") - enemy_data.enemy_defence)
+	var hit_chance = get_hit_chance(accuracy)
+	var roll = randi() % 100
+	
+	print("Roll: %d | Chance: %d%% | Max Hit: %d" % [roll, hit_chance, max_hit])
+	
+	if roll < hit_chance:
+		return randi_range(1, max_hit)
+	else:
+		return 0
+
+func get_hit_chance(accuracy: int) -> float:
+	var base_accuracy : float = 2
+	return (accuracy / (accuracy + base_accuracy)) * 100
+
+
 
 # Enemy attacks back 
 func _enemy_attack() -> void:

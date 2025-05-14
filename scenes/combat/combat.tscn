@@ -275,7 +275,7 @@ offset_bottom = 361.0
 [node name="PlayerHealthBar" type="ProgressBar" parent="VBoxContainer"]
 custom_minimum_size = Vector2(256, 24)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 1
 theme_override_styles/background = SubResource("StyleBoxFlat_ijgaf")
 theme_override_styles/fill = SubResource("StyleBoxFlat_uakg0")
 value = 67.0

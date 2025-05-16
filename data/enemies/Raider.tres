@@ -8,5 +8,5 @@ name = "Raider"
 max_health = 15
 enemy_min_damage = 0
 enemy_max_damage = 3
-enemy_defence = 4
+enemy_defense = 1
 metadata/_custom_type_script = "uid://cletp67jsosil"

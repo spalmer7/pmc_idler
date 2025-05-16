@@ -4,10 +4,10 @@ signal level_up(skill_name: String, new_level: int)
 signal xp_changed(skill_name: String, current_xp: int)
 
 var skills := {
-	"Firearms Training": { "level": 1, "xp": 0, "max_xp": 10 }, # Attack (accuracy)
-	"Weapon Handling": { "level": 1, "xp": 0, "max_xp": 10 }, # Strength (max damage)
-	"Combat Tactics": { "level": 1, "xp": 0, "max_xp": 10 }, # Defense
-	"Vitality": { "level": 10, "xp": 0, "max_xp": 5 } # Health, level up based on other skills xp
+	"Accuracy": { "level": 1, "xp": 0, "max_xp": 85 }, # Attack (accuracy)
+	"Firepower": { "level": 1, "xp": 0, "max_xp": 85 }, # Strength (max damage)
+	"Resilience": { "level": 1, "xp": 0, "max_xp": 85 }, # Defense
+	"Vitality": { "level": 10, "xp": 0, "max_xp": 1100 } # Health, level up based on other skills xp
 }
 
 func add_xp(skill_name: String, amount: int) -> void:
@@ -26,7 +26,7 @@ func add_xp(skill_name: String, amount: int) -> void:
 		emit_signal("level_up", skill_name, skill["level"])
 
 	# Vitality gains 33% XP from combat skills
-	if skill_name in ["Firearms Training", "Weapon Handling", "Combat Tactics"]:
+	if skill_name in ["Accuracy", "Firepower", "Resilience"]:
 		_add_vitality_xp(int(amount * 0.33))
 
 func _add_vitality_xp(amount: int) -> void:

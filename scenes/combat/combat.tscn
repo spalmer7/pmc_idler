@@ -219,7 +219,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_5vqsm")
 rounded = true
 show_percentage = false
 script = ExtResource("2_6aonj")
-skill_name = "Firearms Training"
+skill_name = "Accuracy"
 
 [node name="XPLabel" type="Label" parent="XPBar"]
 layout_mode = 1
@@ -263,7 +263,6 @@ Enemy HP: <hp>"
 
 [node name="HPRegenTimer" type="Timer" parent="."]
 wait_time = 60.0
-autostart = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -308,3 +307,6 @@ show_percentage = false
 script = ExtResource("7_ijgaf")
 regen_timer = NodePath("../../HPRegenTimer")
 combat_script = NodePath("../..")
+
+[node name="PlayerAutoAttackTimer" type="Timer" parent="."]
+wait_time = 3.0

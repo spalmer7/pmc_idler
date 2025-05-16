@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ddehe8606pv7p"]
+[gd_scene load_steps=23 format=3 uid="uid://ddehe8606pv7p"]
 
 [ext_resource type="Script" uid="uid://d8fyt2q3a2yy" path="res://scenes/combat/combat.gd" id="1_5vqsm"]
 [ext_resource type="Script" uid="uid://rhakbff6ojk6" path="res://scenes/combat/xp_bar.gd" id="2_6aonj"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://utc3vkjqe84k" path="res://scenes/combat/vitality_bar.gd" id="4_jgg25"]
 [ext_resource type="Script" uid="uid://bi1ken64obsnk" path="res://scenes/combat/player_health_bar.gd" id="5_4voa6"]
 [ext_resource type="Script" uid="uid://b700sonptgjv2" path="res://scenes/combat/player_health_regen_bar.gd" id="7_ijgaf"]
+[ext_resource type="Script" uid="uid://bh7i5grp3fn3k" path="res://scenes/combat/auto_attack_progress.gd" id="8_uakg0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8cw2p"]
 bg_color = Color(1, 1, 1, 1)
@@ -94,6 +95,20 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h2sm1"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_si0bq"]
+bg_color = Color(0.813032, 0.521562, 0.310276, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [node name="Combat" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -137,17 +152,6 @@ offset_bottom = -8.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "Vitality 40050/50000"
-
-[node name="AttackButton" type="Button" parent="."]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 0
-offset_left = 448.0
-offset_top = 287.0
-offset_right = 704.0
-offset_bottom = 351.0
-focus_mode = 0
-text = "Attack"
 
 [node name="CombatLogScroll" type="ScrollContainer" parent="."]
 unique_name_in_owner = true
@@ -264,14 +268,14 @@ Enemy HP: <hp>"
 [node name="HPRegenTimer" type="Timer" parent="."]
 wait_time = 60.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="PlayerHealthContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 312.0
 offset_right = 264.0
 offset_bottom = 361.0
 
-[node name="PlayerHealthBar" type="ProgressBar" parent="VBoxContainer"]
+[node name="PlayerHealthBar" type="ProgressBar" parent="PlayerHealthContainer"]
 custom_minimum_size = Vector2(256, 24)
 layout_mode = 2
 size_flags_vertical = 1
@@ -281,7 +285,7 @@ value = 67.0
 show_percentage = false
 script = ExtResource("5_4voa6")
 
-[node name="PlayerHealthLabel" type="Label" parent="VBoxContainer/PlayerHealthBar"]
+[node name="PlayerHealthLabel" type="Label" parent="PlayerHealthContainer/PlayerHealthBar"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -295,7 +299,7 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PlayerHealthRegenBar" type="ProgressBar" parent="VBoxContainer" node_paths=PackedStringArray("regen_timer", "combat_script")]
+[node name="PlayerHealthRegenBar" type="ProgressBar" parent="PlayerHealthContainer" node_paths=PackedStringArray("regen_timer", "combat_script")]
 custom_minimum_size = Vector2(0, 4)
 layout_direction = 2
 layout_mode = 2
@@ -310,3 +314,34 @@ combat_script = NodePath("../..")
 
 [node name="PlayerAutoAttackTimer" type="Timer" parent="."]
 wait_time = 3.0
+
+[node name="AttackButtonContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -32.0
+offset_right = 128.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AttackButton" type="Button" parent="AttackButtonContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 64)
+layout_mode = 2
+focus_mode = 0
+text = "Attack"
+
+[node name="AutoAttackProgress" type="ProgressBar" parent="AttackButtonContainer" node_paths=PackedStringArray("attack_timer", "combat_script")]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_h2sm1")
+theme_override_styles/fill = SubResource("StyleBoxFlat_si0bq")
+show_percentage = false
+script = ExtResource("8_uakg0")
+attack_timer = NodePath("../../PlayerAutoAttackTimer")
+combat_script = NodePath("../..")

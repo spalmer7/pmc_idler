@@ -5,7 +5,7 @@ extends Control
 @onready var xp_bar = $XPBar
 @onready var vitality_bar = $VitalityBar
 @onready var enemy_hp_bar = $EnemyHealthBar
-@onready var player_hp_bar = $VBoxContainer/PlayerHealthBar
+@onready var player_hp_bar = $PlayerHealthContainer/PlayerHealthBar
 @onready var hp_regen_timer = $HPRegenTimer
 @onready var auto_attack_timer = $PlayerAutoAttackTimer
 
@@ -73,8 +73,13 @@ func toggle_auto_attack(enable: bool) -> void:
 
 #  Pressing button initiates combat loop
 func _on_button_pressed() -> void:
-	if not auto_attack_enabled:
+	if not auto_attack_enabled and current_player_health > 0:
 		toggle_auto_attack(true)
+	elif current_player_health == 0:
+		combat_logs.append("You can't attack while dead!")
+		_update_combat_logs()
+	else: 
+		toggle_auto_attack(false)
 
 func _perform_attack() -> void:
 
@@ -119,7 +124,7 @@ func _perform_attack() -> void:
 		await get_tree().create_timer(0.5).timeout
 		print("Enemy respawned")
 		_respawn_enemy()
-	
+
 	# Stops regen timer from going if HP is maxed
 	if current_player_health < max_player_health and hp_regen_timer.is_stopped():
 		hp_regen_timer.start()
@@ -137,6 +142,9 @@ func _enemy_attack() -> void:
 	combat_logs.append("%s did %d damage" % [enemy_data.name, enemy_damage])
 	if current_player_health < max_player_health and hp_regen_timer.is_stopped():
 		hp_regen_timer.start()
+	
+	if current_player_health == 0:
+		_player_death()
 
 # Respawn enemy 
 func _respawn_enemy() -> void:
@@ -187,6 +195,11 @@ func _refresh_health_bars() -> void:
 	player_hp_bar.update_player_hp(current_player_health, max_player_health)
 	enemy_hp_bar.update_enemy_hp(enemy_health, enemy_data.max_health)
 
+# Stops combat when player dies
+func _player_death() -> void:
+	toggle_auto_attack(false)
+	combat_logs.append("You've died!")
+	_update_combat_logs()
 
 # Logging levels
 func _on_level_up(skill_name: String, new_level: int) -> void:

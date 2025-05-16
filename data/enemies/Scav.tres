@@ -7,6 +7,6 @@ script = ExtResource("1_jfonv")
 name = "Scav"
 max_health = 10
 enemy_min_damage = 0
-enemy_max_damage = 2
+enemy_max_damage = 3
 enemy_defense = 2
 metadata/_custom_type_script = "uid://cletp67jsosil"

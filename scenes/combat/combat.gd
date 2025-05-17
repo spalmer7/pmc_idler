@@ -125,6 +125,7 @@ func _perform_attack() -> void:
 
 	if enemy_health == 0:
 		print("No damage done, enemy killed")
+		enemy_attack_timer.stop()
 		combat_logs.append("%s neutralized... respawning" % enemy_data.name)
 		await get_tree().create_timer(0.5).timeout
 		print("Respawning")
@@ -163,6 +164,9 @@ func _respawn_enemy() -> void:
 	_update_stats()
 	combat_logs.append("A new enemy has appeared.")
 	_update_combat_logs()
+
+	if auto_attack_enabled:
+		enemy_attack_timer.start()
 
 #  XP bar updates 
 func _on_xp_changed(skill_name: String, _current_xp: int) -> void:

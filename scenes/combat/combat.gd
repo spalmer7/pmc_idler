@@ -4,10 +4,11 @@ extends Control
 @export var enemy_data: EnemyData
 @onready var xp_bar = $XPBar
 @onready var vitality_bar = $VitalityBar
-@onready var enemy_hp_bar = $EnemyHealthBar
+@onready var enemy_hp_bar = $EnemyContainer/EnemyHealthBar
 @onready var player_hp_bar = $PlayerHealthContainer/PlayerHealthBar
 @onready var hp_regen_timer = $HPRegenTimer
 @onready var auto_attack_timer = $PlayerAutoAttackTimer
+@onready var enemy_attack_timer = $EnemyAutoAttackTimer
 
 
 var current_player_health: int
@@ -34,6 +35,8 @@ func _ready() -> void:
 	
 	# Setting up the auto attack timer
 	auto_attack_timer.timeout.connect(_on_auto_attack_tick)
+	# Enemy auto attack
+	enemy_attack_timer.timeout.connect(_on_enemy_auto_attack_tick)
 
 # CALCULATE HIT CHANCE AND DAMAGE #
 func get_hit_chance(accuracy: int, defense: int) -> float:
@@ -62,13 +65,21 @@ func _on_auto_attack_tick() -> void:
 		_perform_attack()
 		print("Performed auto attack")
 
+func _on_enemy_auto_attack_tick() -> void:
+	if auto_attack_enabled and current_player_health > 0 and enemy_health > 0:
+		print("Enemy attacking")
+		_enemy_attack()
+
+# Turns on auto attack cycle
 func toggle_auto_attack(enable: bool) -> void:
 	auto_attack_enabled = enable
 	if enable:
 		auto_attack_timer.start()
+		enemy_attack_timer.start()
 		print("Auto attack enabled and timer started")
 	else:
 		auto_attack_timer.stop()
+		enemy_attack_timer.stop()
 		print("Auto attack disabled and timer stopped")
 
 #  Pressing button initiates combat loop
@@ -109,9 +120,6 @@ func _perform_attack() -> void:
 		xp_bar.update_bar()
 		_refresh_health_bars()
 
-		if enemy_health > 0:
-			_enemy_attack()
-
 		_update_stats()
 		_update_combat_logs()
 
@@ -137,9 +145,11 @@ func _enemy_attack() -> void:
 		current_player_health -= enemy_damage
 		current_player_health = max(current_player_health, 0)
 		_refresh_health_bars()
+		combat_logs.append("%s did %d damage" % [enemy_data.name, enemy_damage])
 		print("Damage done %d, current hp %d" % [enemy_damage, current_player_health])
+		_update_combat_logs()
 	
-	combat_logs.append("%s did %d damage" % [enemy_data.name, enemy_damage])
+	
 	if current_player_health < max_player_health and hp_regen_timer.is_stopped():
 		hp_regen_timer.start()
 	
@@ -199,6 +209,15 @@ func _refresh_health_bars() -> void:
 func _player_death() -> void:
 	toggle_auto_attack(false)
 	combat_logs.append("You've died!")
+	_update_combat_logs()
+	get_tree().root.get_node("game").handle_player_death()
+
+# Respawns player with full HP
+func player_respawn() -> void:
+	_update_health_from_vitality()
+	_refresh_health_bars()
+	_respawn_enemy()
+	combat_logs.append("You have respawned.")
 	_update_combat_logs()
 
 # Logging levels

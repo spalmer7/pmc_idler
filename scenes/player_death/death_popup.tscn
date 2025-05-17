@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://d24isetd0pku8"]
+
+[ext_resource type="Script" uid="uid://dq5d5lk3uyceu" path="res://scenes/player_death/death_popup.gd" id="1_ey5m3"]
+
+[node name="DeathPopup" type="PopupPanel"]
+process_mode = 3
+auto_translate_mode = 1
+mode = 4
+initial_position = 1
+size = Vector2i(512, 512)
+visible = true
+script = ExtResource("1_ey5m3")
+
+[node name="DeathContainer" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 508.0
+offset_bottom = 508.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="DeathContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "You've Died!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RespawnButton" type="Button" parent="DeathContainer"]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "Respawn
+"

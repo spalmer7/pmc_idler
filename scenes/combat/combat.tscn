@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://ddehe8606pv7p"]
+[gd_scene load_steps=26 format=3 uid="uid://ddehe8606pv7p"]
 
 [ext_resource type="Script" uid="uid://d8fyt2q3a2yy" path="res://scenes/combat/combat.gd" id="1_5vqsm"]
 [ext_resource type="Script" uid="uid://rhakbff6ojk6" path="res://scenes/combat/xp_bar.gd" id="2_6aonj"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bi1ken64obsnk" path="res://scenes/combat/player_health_bar.gd" id="5_4voa6"]
 [ext_resource type="Script" uid="uid://b700sonptgjv2" path="res://scenes/combat/player_health_regen_bar.gd" id="7_ijgaf"]
 [ext_resource type="Script" uid="uid://bh7i5grp3fn3k" path="res://scenes/combat/auto_attack_progress.gd" id="8_uakg0"]
+[ext_resource type="Script" uid="uid://b0vgjo61tvmwc" path="res://scenes/combat/enemy_attack_progress.gd" id="9_8cw2p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8cw2p"]
 bg_color = Color(1, 1, 1, 1)
@@ -25,20 +26,6 @@ corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wko5l"]
 bg_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4voa6"]
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jgg25"]
-bg_color = Color(0.525518, 0.00594866, 0, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltalu"]
 bg_color = Color(1, 1, 1, 1)
@@ -109,6 +96,30 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4voa6"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jgg25"]
+bg_color = Color(0.525518, 0.00594866, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j3cqa"]
+bg_color = Color(0.0110876, 0.0110876, 0.0110876, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rgm65"]
+bg_color = Color(0.852598, 0.170934, 0.128839, 1)
+
 [node name="Combat" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -170,39 +181,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_wko5l")
 text = "Combat Log:
 "
 autowrap_mode = 2
-
-[node name="EnemyHealthBar" type="ProgressBar" parent="."]
-custom_minimum_size = Vector2(256, 24)
-layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = 888.0
-offset_top = -13.0
-offset_right = -8.0
-offset_bottom = 14.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_4voa6")
-theme_override_styles/fill = SubResource("StyleBoxFlat_jgg25")
-value = 67.0
-show_percentage = false
-script = ExtResource("3_pqpfu")
-
-[node name="EnemyHealthLabel" type="Label" parent="EnemyHealthBar"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="XPBar" type="ProgressBar" parent="."]
 layout_mode = 1
@@ -315,6 +293,9 @@ combat_script = NodePath("../..")
 [node name="PlayerAutoAttackTimer" type="Timer" parent="."]
 wait_time = 3.0
 
+[node name="EnemyAutoAttackTimer" type="Timer" parent="."]
+wait_time = 3.5
+
 [node name="AttackButtonContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -344,4 +325,44 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_si0bq")
 show_percentage = false
 script = ExtResource("8_uakg0")
 attack_timer = NodePath("../../PlayerAutoAttackTimer")
+combat_script = NodePath("../..")
+
+[node name="EnemyContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 888.0
+offset_top = 312.0
+offset_right = 1144.0
+offset_bottom = 352.0
+
+[node name="EnemyHealthBar" type="ProgressBar" parent="EnemyContainer"]
+custom_minimum_size = Vector2(256, 24)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_4voa6")
+theme_override_styles/fill = SubResource("StyleBoxFlat_jgg25")
+value = 67.0
+show_percentage = false
+script = ExtResource("3_pqpfu")
+
+[node name="EnemyHealthLabel" type="Label" parent="EnemyContainer/EnemyHealthBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EnemyAttackProgress" type="ProgressBar" parent="EnemyContainer" node_paths=PackedStringArray("enemy_attack_timer", "combat_script")]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_j3cqa")
+theme_override_styles/fill = SubResource("StyleBoxFlat_rgm65")
+show_percentage = false
+script = ExtResource("9_8cw2p")
+enemy_attack_timer = NodePath("../../EnemyAutoAttackTimer")
 combat_script = NodePath("../..")

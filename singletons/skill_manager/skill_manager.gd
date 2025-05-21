@@ -3,6 +3,8 @@ extends Node
 signal level_up(skill_name: String, new_level: int)
 signal xp_changed(skill_name: String, current_xp: int)
 
+var latest_skill : String = "Accuracy"
+
 var skills := {
 	"Accuracy": { "level": 1, "xp": 0, "max_xp": 85 }, # Attack (accuracy)
 	"Firepower": { "level": 1, "xp": 0, "max_xp": 85 }, # Strength (max damage)
@@ -28,6 +30,8 @@ func add_xp(skill_name: String, amount: int) -> void:
 	# Vitality gains 33% XP from combat skills
 	if skill_name in ["Accuracy", "Firepower", "Resilience"]:
 		_add_vitality_xp(int(amount * 0.33))
+	
+	latest_skill = skill_name
 
 func _add_vitality_xp(amount: int) -> void:
 	var skill = skills["Vitality"]
@@ -51,7 +55,6 @@ func get_max_xp(skill_name: String) -> int:
 	if skills.has(skill_name):
 		return skills[skill_name]["max_xp"]
 	return 100
-
 
 # Get the level of a specific skill
 func get_level(skill_name: String) -> int:

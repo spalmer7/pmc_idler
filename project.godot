@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 SkillManager="*res://singletons/skill_manager/skill_manager.gd"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [file_customization]
 
 folder_colors={

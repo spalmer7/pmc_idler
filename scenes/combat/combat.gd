@@ -15,6 +15,7 @@ var current_player_health: int
 var max_player_health: int
 var enemy_health: int
 var combat_logs: Array[String] = []
+var current_skill: String
 
 var auto_attack_enabled : bool = false
 
@@ -23,6 +24,14 @@ func _ready() -> void:
 	(%AttackButton as Button).pressed.connect(_on_button_pressed)
 	SkillManager.level_up.connect(_on_level_up)
 	SkillManager.xp_changed.connect(_on_xp_changed)
+	
+	# Setting up the skill buttons
+	current_skill = "Accuracy"
+	SkillManager.latest_skill = current_skill
+	$XPBar.update_bar()
+	%AccuracyButton.pressed.connect(_on_accuracy_pressed)
+	%FirepowerButton.pressed.connect(_on_firepower_pressed)
+	%ResilienceButton.pressed.connect(_on_resilience_pressed)
 
 	_update_health_from_vitality()
 	enemy_health = enemy_data.max_health
@@ -45,7 +54,27 @@ func get_hit_chance(accuracy: int, defense: int) -> float:
 	var chance = 1.0 - ((enemy_defense + 1) / (2.0 * base_accuracy))
 	return clamp(chance * 100.0, 100.0, 100.0)
 
- # Damage formula based on firearm + handling 
+# Defines the current skill
+func _set_combat_skill(skill_name: String) -> void:
+	current_skill = skill_name
+	SkillManager.latest_skill = skill_name
+	combat_logs.append("Switched to %s." % skill_name)
+	_update_combat_logs()
+	_update_stats()
+	
+	($XPBar as ProgressBar).call_deferred("update_bar")
+
+# Accuracy training
+func _on_accuracy_pressed() -> void:
+	_set_combat_skill("Accuracy")
+# Firepower training
+func _on_firepower_pressed() -> void:
+	_set_combat_skill("Firepower")
+# Resilience trainin
+func _on_resilience_pressed() -> void:
+	_set_combat_skill("Resilience")
+
+# Damage formula based on firearm + handling 
 func _calculate_damage() -> int:
 	var accuracy = SkillManager.get_level("Accuracy")
 	var max_hit = int(3 + SkillManager.get_level("Firepower") - enemy_data.enemy_defense)
@@ -99,9 +128,8 @@ func _perform_attack() -> void:
 		enemy_health = max(enemy_health - damage, 0)
 
 		# Main XP gain
-		var main_skill := "Accuracy"
 		var xp_gain = int(damage * 4)
-		SkillManager.add_xp(main_skill, xp_gain)
+		SkillManager.add_xp(current_skill, xp_gain)
 
 		# Vitality XP gain
 		var vitality_xp = int(xp_gain * 0.25)
@@ -109,7 +137,7 @@ func _perform_attack() -> void:
 		# Log XP
 		if damage > 0:
 			combat_logs.append("You hit for %d damage." % damage)
-			combat_logs.append("%d XP to %s" % [xp_gain, main_skill.capitalize()])
+			combat_logs.append("%d XP to %s" % [xp_gain, current_skill])
 			combat_logs.append("%d XP to Vitality" % vitality_xp)
 		elif damage == 0:
 			combat_logs.append("You missed!")
@@ -178,8 +206,9 @@ func _on_xp_changed(skill_name: String, _current_xp: int) -> void:
 
 #  UI stats display 
 func _update_stats() -> void:
-	(%CombatInfo as Label).text = "Accuracy %d\nVIT %d\nHP: %d/%d\nEnemy HP: %d" % [
-		SkillManager.get_level("Accuracy"),
+	(%CombatInfo as Label).text = "%s %d\nVIT %d\nHP: %d/%d\nEnemy HP: %d" % [
+		current_skill,
+		SkillManager.get_level(current_skill),
 		SkillManager.get_level("Vitality"),
 		current_player_health,
 		max_player_health,

@@ -4,3 +4,6 @@
 
 [resource]
 base_font = ExtResource("1_ej4o4")
+opentype_features = {
+1667329140: 0
+}

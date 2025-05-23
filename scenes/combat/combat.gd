@@ -24,7 +24,7 @@ func _ready() -> void:
 	(%AttackButton as Button).pressed.connect(_on_button_pressed)
 	SkillManager.level_up.connect(_on_level_up)
 	SkillManager.xp_changed.connect(_on_xp_changed)
-	
+
 	# Setting up the skill buttons
 	current_skill = "Accuracy"
 	SkillManager.latest_skill = current_skill
@@ -38,14 +38,20 @@ func _ready() -> void:
 	enemy_hp_bar.update_enemy_hp(enemy_health, enemy_data.max_health)
 	player_hp_bar.update_player_hp(current_player_health, max_player_health)
 	_update_stats()
-	
+
 	# Setting up HP regen
 	hp_regen_timer.timeout.connect(_on_regen_tick)
-	
+
 	# Setting up the auto attack timer
 	auto_attack_timer.timeout.connect(_on_auto_attack_tick)
 	# Enemy auto attack
 	enemy_attack_timer.timeout.connect(_on_enemy_auto_attack_tick)
+
+	# Load save 
+	if SaveManager.save_data.has("skills"):
+		SkillManager.load_skills_from_save(SaveManager.save_data["skills"])
+	else:
+		print("Save data missing 'skills' key")
 
 # CALCULATE HIT CHANCE AND DAMAGE #
 func get_hit_chance(accuracy: int, defense: int) -> float:
@@ -185,12 +191,14 @@ func _enemy_attack() -> void:
 	if current_player_health == 0:
 		_player_death()
 
+	SaveManager.save_game()
+
 # Respawn enemy 
 func _respawn_enemy() -> void:
 	enemy_health = enemy_data.max_health
 	enemy_hp_bar.update_enemy_hp(enemy_health, enemy_data.max_health)
 	_update_stats()
-	combat_logs.append("A new enemy has appeared.")
+	combat_logs.append("A %s opens fire." % enemy_data.name)
 	_update_combat_logs()
 
 	if auto_attack_enabled:
@@ -203,6 +211,7 @@ func _on_xp_changed(skill_name: String, _current_xp: int) -> void:
 		xp_bar.max_value = SkillManager.get_max_xp(skill_name)
 	elif skill_name == "Vitality":
 		player_hp_bar.update_player_hp(current_player_health, max_player_health)
+	SaveManager.save_game()
 
 #  UI stats display 
 func _update_stats() -> void:
@@ -250,8 +259,7 @@ func player_respawn() -> void:
 	_update_health_from_vitality()
 	_refresh_health_bars()
 	_respawn_enemy()
-	combat_logs.append("You have respawned.")
-	_update_combat_logs()
+
 
 # Logging levels
 func _on_level_up(skill_name: String, new_level: int) -> void:
@@ -262,6 +270,7 @@ func _on_level_up(skill_name: String, new_level: int) -> void:
 	combat_logs.append("%s leveled up to %d!" % [skill_name.capitalize(), new_level])
 	_update_combat_logs()
 	_update_stats()
+	SaveManager.save_game()
 
 #  Update combat log UI 
 func _update_combat_logs() -> void:

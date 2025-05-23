@@ -4,6 +4,9 @@ extends Node
 @onready var combat = $Combat
 
 func _ready() -> void:
+	$SaveSelect.show()
+	$Combat.hide()
+	$DeathPopup.hide()
 	death_popup.player_respawned.connect(respawn_player)
 
 func handle_player_death() -> void:
